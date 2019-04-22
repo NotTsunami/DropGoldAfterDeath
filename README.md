@@ -2,6 +2,8 @@
 
 When player die hes gold will got splited to alive people. Gold transfer automaticly without user action.
 
+![DropGoldAfterDeath Preview (V.0.1)](https://i.imgur.com/GGnIYqf.png)
+
 ---
 
 ###  Installation
