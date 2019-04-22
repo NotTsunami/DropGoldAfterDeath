@@ -6,7 +6,7 @@ When player die hes gold will got splited to alive people. Gold transfer automat
 
 ###  Installation
 1. Download latest version _(.DLL)_
-2. Drag and drop _DropGoldAfterDeath.DLL_ to `./BepInEx/plugins` folder.
+2. Drag and drop `DropGoldAfterDeath.DLL` to `./BepInEx/plugins` folder.
 
 Plugin works only in multiplay, server host has to have it installed at least.
 
