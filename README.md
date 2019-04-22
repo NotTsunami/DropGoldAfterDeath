@@ -17,4 +17,4 @@ Plugin works only in multiplay, server host has to have it installed at least.
 
 ---
 
-##### PLEASE NOTE: This is _still_ very experimental, and I'd love to hear feedback. I'm on the [modding discord](https://discord.gg/hMdjd9y "Risk of Rain 2 Modding") - my handle is Exel80#0001.
+##### I'd love to hear feedback. I'm on the [modding discord](https://discord.gg/hMdjd9y "Risk of Rain 2 Modding") - my handle is Exel80#0001.
