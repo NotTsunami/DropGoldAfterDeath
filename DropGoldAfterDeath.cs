@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace DropGoldAfterDeath
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("https://github.com/exel80/DropGoldAfterDeath", "DropGoldAfterDeath", "0.1")]
+    [BepInPlugin("github.com/exel80/DropGoldAfterDeath", "DropGoldAfterDeath", "0.1")]
     public class DropGoldAfterDeath : BaseUnityPlugin
     {
         public void Awake()
@@ -26,7 +26,7 @@ namespace DropGoldAfterDeath
                     uint alive = Convert.ToUInt16(PlayerCharacterMasterController.instances.Count - 1);
 
                     // Return if only 1 left
-                    if (alive <= 0) return;
+                    if (alive < 1) return;
 
                     // Take the money and split it
                     component.master.money = 0;
