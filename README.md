@@ -12,8 +12,6 @@ Plugin works only in multiplay, server host has to have it installed at least.
 
 ###  Requirements
 - [BepInEx 4.1.1 or higher](https://github.com/BepInEx/BepInEx).
-- `mod` - Automatically uses modded buildid.
-- Anything else - uses that, as a buildid.
 
 ---
 
