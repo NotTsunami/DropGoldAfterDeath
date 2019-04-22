@@ -2,7 +2,7 @@
     "name": "DropGoldAfterDeath",
     "version_number": "0.1",
     "website_url": "https://github.com/exel80/DropGoldAfterDeath",
-    "description": "A Mod that drop player money after death. Teammates can then go collect the dropped money.",
+    "description": "A Mod that drop player money after death and split them with alive player(s).",
     "dependencies": [
         "bbepis-BepInExPack-1.3.1"
     ]
