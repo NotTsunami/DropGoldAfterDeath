@@ -2,6 +2,8 @@
 
 When player die hes gold will got splited to alive people. Gold transfer automaticly without user action.
 
+![DropGoldAfterDeath Preview (V.0.1)](https://i.imgur.com/GGnIYqf.png)
+
 ---
 
 ###  Installation
@@ -11,7 +13,7 @@ When player die hes gold will got splited to alive people. Gold transfer automat
 Plugin works only in multiplay, server host has to have it installed at least.
 
 ###  Requirements
-- [BepInEx 4.1.1 or higher](https://github.com/BepInEx/BepInEx).
+- [bbepis-BepInExPack-1.3.1 or higher](https://thunderstore.io/package/bbepis/BepInExPack/)
 
 ---
 
