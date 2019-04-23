@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace DropGoldAfterDeath
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("github.com/exel80/DropGoldAfterDeath", "DropGoldAfterDeath", "1.0.0")]
+    [BepInPlugin("github.com/exel80/DropGoldAfterDeath", "DropGoldAfterDeath", "1.0.1")]
     public class DropGoldAfterDeath : BaseUnityPlugin
     {
         public void Awake()
@@ -85,10 +85,6 @@ namespace DropGoldAfterDeath
                     && !player.master.Equals(victim))
                 {
                     listOfBodies.Add(player.master);
-                    Chat.SendBroadcastChat(new Chat.SimpleChatMessage
-                    {
-                        baseToken = string.Format("(ALIVE) DEBUG:{0}", player.master.name)
-                    });
                 }
             }
             return listOfBodies;

@@ -1,6 +1,6 @@
 ﻿{
     "name": "DropGoldAfterDeath",
-    "version_number": "1.0.0",
+    "version_number": "1.0.1",
     "website_url": "https://github.com/exel80/DropGoldAfterDeath",
     "description": "A Mod that drop player money after death and split them with alive player(s).",
     "dependencies": [
