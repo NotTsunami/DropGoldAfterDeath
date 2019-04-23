@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace DropGoldAfterDeath
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("github.com/exel80/DropGoldAfterDeath", "DropGoldAfterDeath", "0.1")]
+    [BepInPlugin("github.com/exel80/DropGoldAfterDeath", "DropGoldAfterDeath", "1.0.0")]
     public class DropGoldAfterDeath : BaseUnityPlugin
     {
         public void Awake()
@@ -23,19 +23,22 @@ namespace DropGoldAfterDeath
                 {
                     // Get money & alive count
                     uint money = component.master.money;
-                    uint alive = Convert.ToUInt16(PlayerCharacterMasterController.instances.Count - 1);
+                    uint playerCount = Convert.ToUInt16(PlayerCharacterMasterController.instances.Count);
+                    List<CharacterMaster> aliveLists = aliveList(component.master);
 
-                    // Return if only 1 left
-                    if (alive < 1) return;
+                    // Return if only 1 left or has extralife
+                    if (aliveLists.Count < 1 || component.master.inventory.GetItemCount(ItemIndex.ExtraLife) <= 1)
+                        return;
 
                     // Take the money and split it
                     component.master.money = 0;
-                    splitMoney(component.master, money, alive);
+                    splitMoney(component.master, money, aliveLists);
 
                     // Broadcast drop message
                     Chat.SendBroadcastChat(new Chat.SimpleChatMessage
                     {
-                        baseToken = string.Format("<color=#e2b00b>{0} gold</color> has been dropped! Alive player(s) received <color=#e2b00b>{1} gold</color> each!", money, (money/alive))
+                        baseToken = string.Format("<color=#e2b00b>{0} gold</color> has been dropped! " +
+                        "Alive player(s) received <color=#e2b00b>{1} gold</color> each!", money, (money/Convert.ToUInt16(aliveLists.Count)))
                     });
                 }
             };
@@ -55,15 +58,15 @@ namespace DropGoldAfterDeath
         /// <param name="victim">Dead player</param>
         /// <param name="money">Dead player total money</param>
         /// <param name="alive">Alive people count</param>
-        private static void splitMoney(CharacterMaster victim, uint money, uint alive)
+        private static void splitMoney(CharacterMaster victim, uint money, List<CharacterMaster> alive)
         {
-            foreach (CharacterMaster player in aliveList())
+            foreach (CharacterMaster player in alive)
             {
                 if (player.isClient
                     && player.isClient
                     && !player.Equals(victim))
                 {
-                    player.money += (money/alive);
+                    player.money += (money/Convert.ToUInt16(alive.Count));
                 }
             }
         }
@@ -71,20 +74,21 @@ namespace DropGoldAfterDeath
         /// <summary>
         /// Return aliveList (BUG: include just death people, remember filter it out)
         /// </summary>
-        private static List<CharacterMaster> aliveList()
+        private static List<CharacterMaster> aliveList(CharacterMaster victim)
         {
             List<CharacterMaster> listOfBodies = new List<CharacterMaster>();
             foreach (PlayerCharacterMasterController player in PlayerCharacterMasterController.instances)
             {
                 if (player.isClient
                     && player.isConnected
-                    && player.master.alive)
+                    && player.master.alive
+                    && !player.master.Equals(victim))
                 {
                     listOfBodies.Add(player.master);
-                    //Chat.SendBroadcastChat(new Chat.SimpleChatMessage
-                    //{
-                    //    baseToken = string.Format("(ALIVE) DEBUG:{0}", player.master.name)
-                    //});
+                    Chat.SendBroadcastChat(new Chat.SimpleChatMessage
+                    {
+                        baseToken = string.Format("(ALIVE) DEBUG:{0}", player.master.name)
+                    });
                 }
             }
             return listOfBodies;
