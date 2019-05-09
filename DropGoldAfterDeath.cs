@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace DropGoldAfterDeath
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("github.com/exel80/DropGoldAfterDeath", "DropGoldAfterDeath", "1.0.1")]
+    [BepInPlugin("github.com/exel80/DropGoldAfterDeath", "DropGoldAfterDeath", "1.0.2")]
     public class DropGoldAfterDeath : BaseUnityPlugin
     {
         public void Awake()
@@ -26,15 +26,18 @@ namespace DropGoldAfterDeath
                     uint playerCount = Convert.ToUInt16(PlayerCharacterMasterController.instances.Count);
                     List<CharacterMaster> aliveLists = aliveList(component.master);
 
-                    // Return if only 1 left or has extralife
-                    if (aliveLists.Count < 1 || component.master.inventory.GetItemCount(ItemIndex.ExtraLife) <= 1)
+                    // Return if there is no more alive player
+                    if (aliveLists.Count < 1)
+                        return;
+                    // Return if player does have a extra life ~ @iDeathHD Thank you for bug report
+                    if (component.master.inventory.GetItemCount(ItemIndex.ExtraLife) >= 1)
                         return;
 
                     // Take the money and split it
                     component.master.money = 0;
                     splitMoney(component.master, money, aliveLists);
 
-                    // Broadcast drop message
+                    // Broadcast drop message<
                     Chat.SendBroadcastChat(new Chat.SimpleChatMessage
                     {
                         baseToken = string.Format("<color=#e2b00b>{0} gold</color> has been dropped! " +
