@@ -6,25 +6,21 @@ using System.Collections.Generic;
 namespace DropGoldAfterDeath
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("github.com/exel80/DropGoldAfterDeath", "DropGoldAfterDeath", "1.0.3")]
+    [BepInPlugin("dev.tsunami.DropGoldAfterDeath", "DropGoldAfterDeath", "1.0.4")]
     public class DropGoldAfterDeath : BaseUnityPlugin
     {
         public void Awake()
         {
-            // Thanky you @Storm312 for showing me how this works.
-            On.RoR2.GlobalEventManager.OnPlayerCharacterDeath += (orig, self, damageInfo, victim, victimNetworkUser) =>
+            // Thank you @Storm312 for showing me how this works
+            On.RoR2.GlobalEventManager.OnPlayerCharacterDeath += (orig, self, damageReport, networkUser) =>
             {
-                orig(self, damageInfo, victim, victimNetworkUser);
-                CharacterBody component = victim.GetComponent<CharacterBody>();
-                NetworkUser networkUser = Util.LookUpBodyNetworkUser(component);
+                orig(self, damageReport, networkUser);
+                CharacterBody component = damageReport.victim.GetComponent<CharacterBody>();
 
-                if (!networkUser && !isMultiplayer()) return;
+                if (!networkUser || !isMultiplayer()) return;
+                if (component.master.inventory.GetItemCount(ItemIndex.ExtraLife) > 0) return;
                 if (component.master.money > 0)
                 {
-                    // Return if player does have a extra life ~ @iDeathHD Thank you for bug report
-                    if (component.master.inventory.GetItemCount(ItemIndex.ExtraLife) >= 1)
-                        return;
-
                     // Get money & alive count
                     uint money = component.master.money;
                     List<CharacterMaster> aliveLists = aliveList(component.master);
@@ -75,8 +71,7 @@ namespace DropGoldAfterDeath
 
             foreach (PlayerCharacterMasterController player in PlayerCharacterMasterController.instances)
             {
-                if (player.isClient
-                    && player.isConnected
+                if (player.isPlayerControlled
                     && player.master.alive
                     && !player.master.Equals(victim))
                 {
