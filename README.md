@@ -1,20 +1,16 @@
-## DropGoldAfterDeath - A Mod that drop player money after death and split them with alive player(s).
+# DropGoldOnDeath
+A Risk of Rain 2 mod that splits your gold among remaining alive players.
 
-When player die hes gold will got splited to alive people. Gold transfer automaticly without user action.
+## Features
+This mod that splits your gold among remaining alive players. This is an improved fork of the original [DropGoldAfterDeath](https://thunderstore.io/package/exel80/DropGoldAfterDeath/) mod, by [exel80](https://github.com/exel80), with the following changes:
+- Updated to work with the latest R2API as of publishing
+- Trimmed output down to only 1 line of chat
+- Fixed null/multiplayer checks
+- Reduced calculations
 
-![DropGoldAfterDeath Preview (V.0.1)](https://i.imgur.com/GGnIYqf.png)
+## Installation
+1. Install [BepInEx](https://thunderstore.io/package/bbepis/BepInExPack/) and [R2API](https://thunderstore.io/package/tristanmcpherson/R2API/).
+2. Copy the included `DropGoldOnDeath.dll` into the resulting `C:\Program Files (x86)\Steam\steamapps\common\Risk of Rain 2\BepInEx\plugins` folder.
+3. Launch the game and enjoy! To remove you simply need to delete the `DropGoldOnDeath.dll` file.
 
----
-
-###  Installation
-1. Download latest version _(.DLL)_
-2. Drag and drop `DropGoldAfterDeath.DLL` to `./BepInEx/plugins` folder.
-
-Plugin works only in multiplay, server host has to have it installed at least.
-
-###  Requirements
-- [bbepis-BepInExPack-1.3.1 or higher](https://thunderstore.io/package/bbepis/BepInExPack/)
-
----
-
-##### I'd love to hear feedback. I'm on the [modding discord](https://discord.gg/hMdjd9y "Risk of Rain 2 Modding") - my handle is Exel80#0001.
+[Skull Crossbones icon](https://icons8.com/icons/set/self-destruct-button--v1) icon by [Icons8](https://icons8.com).

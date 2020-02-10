@@ -3,11 +3,11 @@ using RoR2;
 using System;
 using System.Collections.Generic;
 
-namespace DropGoldAfterDeath
+namespace DropGoldOnDeath
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("dev.tsunami.DropGoldAfterDeath", "DropGoldAfterDeath", "1.0.4")]
-    public class DropGoldAfterDeath : BaseUnityPlugin
+    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.0.4")]
+    public class DropGoldOnDeath : BaseUnityPlugin
     {
         public void Awake()
         {
