@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace DropGoldOnDeath
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.0.4")]
+    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.0.5")]
     public class DropGoldOnDeath : BaseUnityPlugin
     {
         public void Awake()

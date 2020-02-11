@@ -13,4 +13,8 @@ This mod that splits your gold among remaining alive players. This is an improve
 2. Copy the included `DropGoldOnDeath.dll` into the resulting `C:\Program Files (x86)\Steam\steamapps\common\Risk of Rain 2\BepInEx\plugins` folder.
 3. Launch the game and enjoy! To remove you simply need to delete the `DropGoldOnDeath.dll` file.
 
+## Changelog
+### Version 1.0.5
+- Zero out victim's gold (Prevents victim from retaining gold when resurrect through other means, such as the ShrineOfDio mod)
+
 [Skull Crossbones icon](https://icons8.com/icons/set/self-destruct-button--v1) icon by [Icons8](https://icons8.com).
