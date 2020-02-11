@@ -28,7 +28,8 @@ namespace DropGoldOnDeath
                     // Return if there is no more alive players
                     if (count < 1) return;
 
-                    // Split gold
+                    // Zero the victim's gold and distribute it
+                    component.master.money = 0;
                     SplitMoney(aliveLists, money, count);
 
                     // Broadcast drop message
