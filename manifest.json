@@ -1,10 +1,10 @@
 ﻿{
     "name": "DropGoldOnDeath",
-    "version_number": "1.0.5",
+    "version_number": "1.0.6",
     "website_url": "https://github.com/NotTsunami/DropGoldOnDeath",
     "description": "A Risk of Rain 2 mod that splits your gold among remaining alive players.",
     "dependencies": [
-      "tristanmcpherson-R2API-2.3.22",
-      "bbepis-BepInExPack-3.0.0"
+        "tristanmcpherson-R2API-2.4.10",
+        "bbepis-BepInExPack-3.2.0"
     ]
 }

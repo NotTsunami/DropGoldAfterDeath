@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace DropGoldOnDeath
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.0.5")]
+    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.0.6")]
     public class DropGoldOnDeath : BaseUnityPlugin
     {
         public void Awake()
@@ -71,7 +71,7 @@ namespace DropGoldOnDeath
             foreach (PlayerCharacterMasterController player in PlayerCharacterMasterController.instances)
             {
                 if (player.isConnected
-                    && player.master.alive
+                    && player.master.hasBody
                     && !player.master.Equals(victim))
                 {
                     players.Add(player.master);

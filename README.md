@@ -14,7 +14,10 @@ This mod that splits your gold among remaining alive players. This is an improve
 3. Launch the game and enjoy! To remove you simply need to delete the `DropGoldOnDeath.dll` file.
 
 ## Changelog
+### Version 1.0.6
+- Artifacts update!
+
 ### Version 1.0.5
 - Zero out victim's gold (Prevents victim from retaining gold when resurrect through other means, such as the ShrineOfDio mod)
 
-[Skull Crossbones icon](https://icons8.com/icons/set/self-destruct-button--v1) icon by [Icons8](https://icons8.com).
+[Skull Crossbones icon](https://icons8.com/icons/set/self-destruct-button--v1) by [Icons8](https://icons8.com).
