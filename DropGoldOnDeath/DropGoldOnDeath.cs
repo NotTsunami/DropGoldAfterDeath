@@ -23,10 +23,8 @@ namespace DropGoldOnDeath
                 if (component.master.money > 0)
                 {
                     // Pick a random quip to add a little humor
-                    string[] quips =
-                        {"Don't forget to thank them!", "Everybody point and laugh!", "How kind of them!", "Maybe next time...", "Someone didn't heal enough!", "What were they thinking?!", "We're rich!"};
                     Random rand = new Random();
-                    int index = rand.Next(quips.Length);
+                    int index = rand.Next(Quips.Length);
 
                     // Get players alive and gold count
                     List<CharacterMaster> aliveLists = AliveList(component.master);
@@ -43,11 +41,16 @@ namespace DropGoldOnDeath
                     // Broadcast drop message
                     Chat.SendBroadcastChat(new Chat.SimpleChatMessage
                     {
-                        baseToken = $"<color=#00FF80>{networkUser.userName}</color> gave everyone <color=#e2b00b>{(money / count)} gold</color> from the grave! {quips[index]}"
+                        baseToken = $"<color=#00FF80>{networkUser.userName}</color> gave everyone <color=#e2b00b>{(money / count)} gold</color> from the grave! {Quips[index]}"
                     });
                 }
             };
         }
+
+        /// <summary>
+        /// Array of funny strings to randomly pick from and append to chat message
+        /// </summary>
+        private static readonly string[] Quips = {"Don't forget to thank them!", "Everybody point and laugh!", "How kind of them!", "Maybe next time...", "Someone didn't heal enough!", "What were they thinking?!", "We're rich!"};
 
         /// <summary>
         /// Return true if more then 1 player in-game
