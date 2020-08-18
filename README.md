@@ -1,12 +1,11 @@
 # DropGoldOnDeath
-A Risk of Rain 2 mod that splits your gold among remaining alive players.
+A Risk of Rain 2 mod that splits your gold among remaining alive players. All players are required to have this mod to achieve the intended effect.
 
 ## Features
 This mod that splits your gold among remaining alive players. This is an improved fork of the original [DropGoldAfterDeath](https://thunderstore.io/package/exel80/DropGoldAfterDeath/) mod, by [exel80](https://github.com/exel80), with the following changes:
-- Updated to work with the latest R2API as of publishing
+- Updated to work with the latest R2API
+- Code restructured to reduce unnecessary checks
 - Trimmed output down to only 1 line of chat
-- Fixed null/multiplayer checks
-- Reduced calculations
 
 ## Installation
 1. Install [BepInEx](https://thunderstore.io/package/bbepis/BepInExPack/) and [R2API](https://thunderstore.io/package/tristanmcpherson/R2API/).
@@ -14,6 +13,10 @@ This mod that splits your gold among remaining alive players. This is an improve
 3. Launch the game and enjoy! To remove you simply need to delete the `DropGoldOnDeath.dll` file.
 
 ## Changelog
+### Version 1.1.0
+- Updated for Risk of Rain 2 version 1.0
+- Adds in funny quips to each death message
+
 ### Version 1.0.6
 - Artifacts update!
 
