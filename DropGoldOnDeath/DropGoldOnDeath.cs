@@ -23,8 +23,8 @@ namespace DropGoldOnDeath
                 if (component.master.money > 0)
                 {
                     // Pick a random quip to add a little humor
-                    Random rand = new Random();
-                    int index = rand.Next(Quips.Length);
+                    Xoroshiro128Plus rand = new Xoroshiro128Plus(Run.instance.stageRng.nextUlong);
+                    int index = rand.RangeInt(0, Quips.Length);
 
                     // Get players alive and gold count
                     List<CharacterMaster> aliveLists = AliveList(component.master);
