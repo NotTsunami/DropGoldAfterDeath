@@ -6,9 +6,15 @@ using System.Collections.Generic;
 
 namespace DropGoldOnDeath
 {
+    // Support BiggerBazaar
+    [BepInDependency("com.MagnusMagnuson.BiggerBazaar", BepInDependency.DependencyFlags.SoftDependency)]
+
+    // Do not support ShareSuite
+    [BepInDependency("com.funkfrog_sipondo.sharesuite", BepInDependency.DependencyFlags.SoftDependency)]
+
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.DifferentModVersionsAreOk)]
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.1.0")]
+    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.2.0")]
     public class DropGoldOnDeath : BaseUnityPlugin
     {
         public void Awake()
@@ -18,8 +24,26 @@ namespace DropGoldOnDeath
                 orig(self, damageReport, networkUser);
                 CharacterBody component = damageReport.victimBody;
                 
+                // Bail early if user is not in multiplayer
                 if (!networkUser || !IsMultiplayer()) return;
+
+                // Bail if ShareSuite is detected
+                // ShareSuite uses a shared pool of gold already, thus defeating the purpose.
+                if (HasShareSuite())
+                {
+                    UnityEngine.Debug.Log("DropGoldOnDeath: ShareSuite detected, no changes to gold");
+                    return;
+                }
+
+                // Bail if BiggerBazaar is detected and a Newt Altar has been activated
+                // For more context, BiggerBazaar allows you to retain your money after the stage when a
+                // newt altar is active. In this case, don't split the gold among everyone and allow the
+                // dead players to spend the money they did have.
+                if (HasBiggerBazaar() && IsNewtAltarActive()) return;
+                
+                // Bail if the user has an unused Dio's Best Friend
                 if (component.master.inventory.GetItemCount(ItemIndex.ExtraLife) > 0) return;
+
                 if (component.master.money > 0)
                 {
                     // Pick a random quip to add a little humor
@@ -58,6 +82,30 @@ namespace DropGoldOnDeath
         private static bool IsMultiplayer()
         {
             return PlayerCharacterMasterController.instances.Count > 1;
+        }
+
+        /// <summary>
+        /// Return true if a Newt Altar has been activated
+        /// </summary>
+        private static bool IsNewtAltarActive()
+        {
+            return TeleporterInteraction.instance.shouldAttemptToSpawnShopPortal;
+        }
+
+        /// <summary>
+        /// Return true if BiggerBazaar is detected
+        /// </summary>
+        private static bool HasBiggerBazaar()
+        {
+            return BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.MagnusMagnuson.BiggerBazaar");
+        }
+
+        /// <summary>
+        /// Return true if ShareSuite is detected
+        /// </summary>
+        private static bool HasShareSuite()
+        {
+            return BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.funkfrog_sipondo.sharesuite");
         }
 
         /// <summary>
