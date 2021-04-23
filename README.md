@@ -5,7 +5,7 @@ A Risk of Rain 2 mod that splits your gold among remaining alive players. All pl
 This mod that splits your gold among remaining alive players. This is an improved fork of the original [DropGoldAfterDeath](https://thunderstore.io/package/exel80/DropGoldAfterDeath/) mod, by [exel80](https://github.com/exel80), with the following changes:
 - Adds in funny, randomized quips on each death message
 - Better compatibility with existing mods
-- Updated to work with the latest Risk of Rain 2 update as of publish date
+- Updated to work with the latest Risk of Rain 2 update as of anniversary update
 
 ## Installation
 1. Install [BepInEx](https://thunderstore.io/package/bbepis/BepInExPack/) and [R2API](https://thunderstore.io/package/tristanmcpherson/R2API/).
@@ -13,6 +13,12 @@ This mod that splits your gold among remaining alive players. This is an improve
 3. Launch the game and enjoy! To remove you simply need to delete the `DropGoldOnDeath.dll` file.
 
 ## Changelog
+### Version 1.2.1
+- Stricter network compatibility (Everyone must now have the same version)
+- Switched to local stripped libs instead of relying on game's installation
+    - Fewer binaries are included as well now
+- Updated for anniversary update
+
 ### Version 1.2.0
 - Supports BiggerBazaar now! Gold is not dropped when the mod is detected and a Newt Altar is active.
 - No longer attempts to activate if ShareSuite is detected.

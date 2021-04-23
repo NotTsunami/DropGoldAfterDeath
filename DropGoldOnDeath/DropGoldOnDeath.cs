@@ -12,9 +12,9 @@ namespace DropGoldOnDeath
     // Do not support ShareSuite
     [BepInDependency("com.funkfrog_sipondo.sharesuite", BepInDependency.DependencyFlags.SoftDependency)]
 
-    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.DifferentModVersionsAreOk)]
+    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.2.0")]
+    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.2.1")]
     public class DropGoldOnDeath : BaseUnityPlugin
     {
         public void Awake()
@@ -23,7 +23,7 @@ namespace DropGoldOnDeath
             {
                 orig(self, damageReport, networkUser);
                 CharacterBody component = damageReport.victimBody;
-                
+
                 // Bail early if user is not in multiplayer
                 if (!networkUser || !IsMultiplayer()) return;
 
@@ -40,9 +40,9 @@ namespace DropGoldOnDeath
                 // newt altar is active. In this case, don't split the gold among everyone and allow the
                 // dead players to spend the money they did have.
                 if (HasBiggerBazaar() && IsNewtAltarActive()) return;
-                
+
                 // Bail if the user has an unused Dio's Best Friend
-                if (component.master.inventory.GetItemCount(ItemIndex.ExtraLife) > 0) return;
+                if (component.master.inventory.GetItemCount(RoR2Content.Items.ExtraLife) > 0) return;
 
                 if (component.master.money > 0)
                 {
