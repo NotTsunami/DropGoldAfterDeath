@@ -19,10 +19,11 @@ namespace DropGoldOnDeath
     {
         public void Awake()
         {
-            On.RoR2.GlobalEventManager.OnPlayerCharacterDeath += (orig, self, damageReport, networkUser) =>
+            // Subscribe to the pre-existing event, we were being a bad boy and hooking onto the GlobalEventManager before
+            GlobalEventManager.onCharacterDeathGlobal += (damageReport) =>
             {
-                orig(self, damageReport, networkUser);
                 CharacterBody component = damageReport.victimBody;
+                NetworkUser networkUser = component.master.playerCharacterMasterController.networkUser;
 
                 // Bail early if user is not in multiplayer
                 if (!networkUser || !IsMultiplayer()) return;
