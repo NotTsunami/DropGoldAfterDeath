@@ -2,6 +2,8 @@
 using RoR2;
 using System;
 using System.Collections.Generic;
+using Zio;
+using Zio.FileSystems;
 
 namespace DropGoldOnDeath
 {
@@ -14,8 +16,28 @@ namespace DropGoldOnDeath
     [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.2.1")]
     public class DropGoldOnDeath : BaseUnityPlugin
     {
+        /// Array of funny strings to randomly pick from and append to chat message
+        public static readonly string[] Quips = {"QUIP_1", "QUIP_2", "QUIP_3", "QUIP_4", "QUIP_5", "QUIP_6"};
+
+        // FileSystem for ZIO
+        public static FileSystem FileSystem { get; private set; }
+
         public void Awake()
         {
+            // This adds in support for multiple languages
+            // R2API offers LanguageAPI but we want to remain compatible with vanilla, thus use ZIO
+            PhysicalFileSystem physicalFileSystem = new PhysicalFileSystem();
+            var assemblyDir = System.IO.Path.GetDirectoryName(Info.Location);
+            FileSystem = new SubFileSystem(physicalFileSystem, physicalFileSystem.ConvertPathFromInternal(assemblyDir));
+
+            if (FileSystem.DirectoryExists("/Language/"))
+            {
+                Language.collectLanguageRootFolders += delegate (List<DirectoryEntry> list)
+                {
+                    list.Add(FileSystem.GetDirectoryEntry("/Language/"));
+                };
+            }
+
             // Subscribe to the pre-existing event, we were being a bad boy and hooking onto the GlobalEventManager before
             GlobalEventManager.onCharacterDeathGlobal += (damageReport) =>
             {
@@ -50,77 +72,55 @@ namespace DropGoldOnDeath
 
                     // Get players alive and gold count
                     List<CharacterMaster> aliveLists = AliveList(component.master);
-                    uint count = Convert.ToUInt32(aliveLists.Count);
                     uint money = component.master.money;
+                    uint count = Convert.ToUInt32(aliveLists.Count);
 
                     // Return if there is no more alive players
                     if (count < 1) return;
 
                     // Zero the victim's gold and distribute it
+                    uint split = money / count;
                     component.master.money = 0;
-                    SplitMoney(aliveLists, money, count);
+                    foreach (CharacterMaster player in aliveLists)
+                    {
+                        player.money += split;
+                    }
 
                     // Broadcast drop message
                     Chat.SendBroadcastChat(new Chat.SimpleChatMessage
                     {
-                        baseToken = $"<color=#00FF80>{networkUser.userName}</color> gave everyone <color=#e2b00b>{(money / count)} gold</color> from the grave! {Quips[index]}"
+                        baseToken = $"DEATH_MESSAGE",
+                        paramTokens = new [] { networkUser.userName, split.ToString(), Language.GetString(Quips[index]) }
                     });
                 }
             };
         }
 
-        /// <summary>
-        /// Array of funny strings to randomly pick from and append to chat message
-        /// </summary>
-        private static readonly string[] Quips = {"Don't forget to thank them!", "Everybody point and laugh!", "How kind of them!", "Maybe next time...", "Someone didn't heal enough!", "What were they thinking?!", "We're rich!"};
-
-        /// <summary>
         /// Return true if more then 1 player in-game
-        /// </summary>
         private static bool IsMultiplayer()
         {
             return PlayerCharacterMasterController.instances.Count > 1;
         }
 
-        /// <summary>
         /// Return true if a Newt Altar has been activated
-        /// </summary>
         private static bool IsNewtAltarActive()
         {
             return TeleporterInteraction.instance.shouldAttemptToSpawnShopPortal;
         }
 
-        /// <summary>
         /// Return true if BiggerBazaar is detected
-        /// </summary>
         private static bool HasBiggerBazaar()
         {
             return BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.MagnusMagnuson.BiggerBazaar");
         }
 
-        /// <summary>
         /// Return true if ShareSuite is detected
-        /// </summary>
         private static bool HasShareSuite()
         {
             return BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.funkfrog_sipondo.sharesuite");
         }
 
-        /// <summary>
-        /// Split dead player gold to alive players
-        /// </summary>
-        /// <param name="alive">List representing players alive</param>
-        /// <param name="money">uint representing gold total of victim</param>
-        /// <param name="count">uint representing players alive</param>
-        private static void SplitMoney(List<CharacterMaster> alive, uint money, uint count)
-        {
-            foreach (CharacterMaster player in alive)
-                player.money += (money / count);
-        }
-
-        /// <summary>
         /// Return list of alive player(s)
-        /// </summary>
         private static List<CharacterMaster> AliveList(CharacterMaster victim)
         {
             List<CharacterMaster> players = new List<CharacterMaster>();
