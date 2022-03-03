@@ -1,12 +1,12 @@
 {
-    "strings":
-    {
-        "DEATH_MESSAGE" : "<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave! {2}",
-        "QUIP_1" : "Don't forget to thank them for dying!",
-        "QUIP_2": "Everybody point and laugh!",
-        "QUIP_3": "How kind of them!",
-        "QUIP_4": "Maybe next time...",
-        "QUIP_5": "Someone needs more health!",
-        "QUIP_6": "What were they thinking?!"
-    }
+  "strings": {
+    "DGOD_DEATH_MESSAGE": "<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave! {2}",
+    "DGOD_DEATH_MESSAGE_WITHOUT_QUIP": "<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave!",
+    "QUIP_1": "Don't forget to thank them for dying!",
+    "QUIP_2": "Everybody point and laugh!",
+    "QUIP_3": "How kind of them!",
+    "QUIP_4": "Maybe next time...",
+    "QUIP_5": "Someone needs more health!",
+    "QUIP_6": "What were they thinking?!"
+  }
 }

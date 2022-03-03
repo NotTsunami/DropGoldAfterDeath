@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using RoR2;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,13 @@ namespace DropGoldOnDeath
 
         public void Awake()
         {
+            bool quipsEnabled =
+                Config.Bind(new ConfigDefinition("Drop Gold On Death", "Quips Enabled"), true, new ConfigDescription("Enables quips, which are fun little messages appended to the message in chat after death.", null, Array.Empty<object>())).Value;
+            float goldMultiplier = Config.Bind(
+                new ConfigDefinition("Drop Gold On Death", "Gold Multiplier"), 1f,
+                new ConfigDescription("Gold multiplier applied to gold split among players.", null,
+                    Array.Empty<object>())).Value;
+
             // This adds in support for multiple languages
             // R2API offers LanguageAPI but we want to remain compatible with vanilla, thus use ZIO
             PhysicalFileSystem physicalFileSystem = new PhysicalFileSystem();
@@ -83,15 +91,27 @@ namespace DropGoldOnDeath
                     component.master.money = 0;
                     foreach (CharacterMaster player in aliveLists)
                     {
-                        player.money += split;
+                        player.money += (uint)(split * goldMultiplier);
                     }
 
                     // Broadcast drop message
-                    Chat.SendBroadcastChat(new Chat.SimpleChatMessage
+                    if (quipsEnabled)
                     {
-                        baseToken = $"DEATH_MESSAGE",
-                        paramTokens = new [] { networkUser.userName, split.ToString(), Language.GetString(Quips[index]) }
-                    });
+                        Chat.SendBroadcastChat(new Chat.SimpleChatMessage
+                        {
+                            baseToken = $"DGOD_DEATH_MESSAGE",
+                            paramTokens = new [] { networkUser.userName, split.ToString(), Language.GetString(Quips[index]) }
+                        });
+                    }
+                    else
+                    {
+                        Chat.SendBroadcastChat(new Chat.SimpleChatMessage
+                        {
+                            baseToken = $"DGOD_DEATH_MESSAGE_WITHOUT_QUIP",
+                            paramTokens = new [] { networkUser.userName, split.ToString(), Language.GetString(Quips[index]) }
+                        });
+                    }
+                    
                 }
             };
         }

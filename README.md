@@ -16,6 +16,9 @@ It is highly recommended to use [r2modman](https://thunderstore.io/package/ebkr/
 - Language support has been added
     - If you would like to contribute a translation, please look at the section below!
 - Subscribe to `onCharacterDeathGlobal` instead of hooking at runtime
+- Configuration has been added
+    - A configurable gold multiplier has been added that is applied to the pool of gold split between alive players
+    - Quips can now be disabled
 
 ### Version 1.2.1
 - Stricter network compatibility (Everyone must now have the same version)
