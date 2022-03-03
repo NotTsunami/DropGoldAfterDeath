@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using R2API.Utils;
 using RoR2;
 using System;
 using System.Collections.Generic;
@@ -12,8 +11,6 @@ namespace DropGoldOnDeath
     // Do not support ShareSuite
     [BepInDependency("com.funkfrog_sipondo.sharesuite", BepInDependency.DependencyFlags.SoftDependency)]
 
-    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-    [BepInDependency("com.bepis.r2api")]
     [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.2.1")]
     public class DropGoldOnDeath : BaseUnityPlugin
     {
