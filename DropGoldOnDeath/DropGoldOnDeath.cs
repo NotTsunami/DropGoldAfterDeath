@@ -13,7 +13,7 @@ namespace DropGoldOnDeath
     // Do not support ShareSuite
     [BepInDependency("com.funkfrog_sipondo.sharesuite", BepInDependency.DependencyFlags.SoftDependency)]
 
-    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "1.2.1")]
+    [BepInPlugin("dev.tsunami.DropGoldOnDeath", "DropGoldOnDeath", "2.0.0")]
     public class DropGoldOnDeath : BaseUnityPlugin
     {
         /// Array of funny strings to randomly pick from and append to chat message
