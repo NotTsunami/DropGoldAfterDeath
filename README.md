@@ -1,5 +1,5 @@
 # DropGoldOnDeath
-A Risk of Rain 2 mod that splits your gold among remaining alive players. All players are required to have this mod to achieve the intended effect.
+A Risk of Rain 2 mod that splits your gold among remaining alive players.
 
 ## Features
 This mod that splits your gold among remaining alive players. This is an improved fork of the original [DropGoldAfterDeath](https://thunderstore.io/package/exel80/DropGoldAfterDeath/) mod, by [exel80](https://github.com/exel80), with the following changes:
@@ -8,14 +8,14 @@ This mod that splits your gold among remaining alive players. This is an improve
 - Updated to work with the latest Risk of Rain 2 update as of anniversary update
 
 ## Installation
-It is highly recommended to use [r2modman](https://thunderstore.io/package/ebkr/r2modman/) to install DropGoldOnDeath because it will set up everything for you! If you are installing manually, you will need to make a folder in `Risk of Rain 2\BepInEx\plugins` called `DropGoldOnDeath` and drop the contents of the zip into it. The Language folder must be included, otherwise the mod will fail to function correctly.
+It is highly recommended to use [r2modman](https://thunderstore.io/package/ebkr/r2modman/) to install DropGoldOnDeath because it will set up everything for you! If you are installing manually, you will need to make a folder in `Risk of Rain 2\BepInEx\plugins` called `DropGoldOnDeath` and drop the contents of the zip into it.
 
 ## Changelog
 ### Version 2.0.0
 - R2API dependency has been removed, making ShowDeathCause vanilla-compatible!
+- Subscribe to `onCharacterDeathGlobal` instead of hooking at runtime
 - Language support has been added
     - If you would like to contribute a translation, please look at the section below!
-- Subscribe to `onCharacterDeathGlobal` instead of hooking at runtime
 - Configuration has been added
     - A configurable gold multiplier has been added that is applied to the pool of gold split between alive players
     - Quips can now be disabled
@@ -41,13 +41,64 @@ It is highly recommended to use [r2modman](https://thunderstore.io/package/ebkr/
 ### Version 1.0.5
 - Zero out victim's gold (Prevents victim from retaining gold when resurrecting through other means, such as the ShrineOfDio mod)
 
-### Contributing a Translation
+## Contributing a Translation
 Thank you for your interest in contributing a translation! You can contribute a translation by following the steps below:
-1. Make a folder in the `Language` folder with the ISO 639-1 code as the name. For example, if I were contributing a French translation, the correct path would be `Language/fr`.
-2. Copy the `dgod_tokens.json` file from `Language/en` to your newly created folder.
-3. Add your translations!
 
-Anything in brackets ({}) or wrapped in <> does not need to be translated. For example, if you were translating the `DEATH_MESSAGE` token, which reads `<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave! {2}` as of version 2.0.0, you would only translate "gave everyone" and "from the grave!".
+1. Locate this code block in `DropGoldOnDeath.cs` (I have omitted several of the `list.Add()` calls as there are a lot of tokens, but the [...] block refers to all of the tokens):
+```csharp
+Language.onCurrentLanguageChanged += () =>
+{
+    var list = new List<KeyValuePair<string, string>>();
+    if (Language.currentLanguageName == "en")
+    {
+            list.Add(new KeyValuePair<string, string>("DGOD_DEATH_MESSAGE", "<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave! {2}"));
+            [...]
+            list.Add(new KeyValuePair<string, string>("QUIP_6", "What were they thinking?!"));
+    }
+    Language.currentLanguage.SetStringsByTokens(list);
+}
+```
+2. You will want to add another branch to the if statement that checks against your language's [IETF language tag](https://en.wikipedia.org/wiki/IETF_language_tag). The code should now look like the following if I were translating for French:
+```csharp
+Language.onCurrentLanguageChanged += () =>
+{
+    var list = new List<KeyValuePair<string, string>>();
+    if (Language.currentLanguageName == "en")
+    {
+            list.Add(new KeyValuePair<string, string>("DGOD_DEATH_MESSAGE", "<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave! {2}"));
+            [...]
+            list.Add(new KeyValuePair<string, string>("QUIP_6", "What were they thinking?!"));
+    }
+    else if (Language.currentLanguageName == "fr")
+    {
+    
+    }
+    Language.currentLanguage.SetStringsByTokens(list);
+}
+```
+3. Copy all of the `list.add();` calls from the `en` section to your branch, and then translate them as per the suggestion below. The final code should look like:
+```csharp
+Language.onCurrentLanguageChanged += () =>
+{
+    var list = new List<KeyValuePair<string, string>>();
+    if (Language.currentLanguageName == "en")
+    {
+            list.Add(new KeyValuePair<string, string>("DGOD_DEATH_MESSAGE", "<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave! {2}"));
+            [...]
+            list.Add(new KeyValuePair<string, string>("QUIP_6", "What were they thinking?!"));
+    }
+    else if (Language.currentLanguageName == "fr")
+    {
+		    list.Add(new KeyValuePair<string, string>("DGOD_DEATH_MESSAGE", "<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave! {2}"));
+            [...]
+            list.Add(new KeyValuePair<string, string>("QUIP_6", "What were they thinking?!"));
+    }
+    Language.currentLanguage.SetStringsByTokens(list);
+}
+```
+4. Send in a pull request through GitHub!
+
+Anything in brackets ({}) or wrapped in <> does not need to be translated. For example, if you were translating the `DGOD_DEATH_MESSAGE` token, which reads `<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave! {2}` as of version 2.0.0, you would only translate "gave everyone" and "from the grave!".
 
 ## Credits to the Original Author
 [exel80](https://github.com/exel80)

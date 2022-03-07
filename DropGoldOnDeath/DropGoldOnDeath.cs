@@ -3,9 +3,10 @@ using BepInEx.Configuration;
 using RoR2;
 using System;
 using System.Collections.Generic;
-using Zio;
-using Zio.FileSystems;
 
+// ReSharper disable CommentTypo
+// ReSharper disable StringLiteralTypo
+// ReSharper disable UnusedMember.Global
 namespace DropGoldOnDeath
 {
     // Support BiggerBazaar
@@ -20,37 +21,42 @@ namespace DropGoldOnDeath
         /// Array of funny strings to randomly pick from and append to chat message
         public static readonly string[] Quips = {"QUIP_1", "QUIP_2", "QUIP_3", "QUIP_4", "QUIP_5", "QUIP_6"};
 
-        // FileSystem for ZIO
-        public static FileSystem FileSystem { get; private set; }
-
         public void Awake()
         {
-            bool quipsEnabled =
+            var quipsEnabled =
                 Config.Bind(new ConfigDefinition("Drop Gold On Death", "Quips Enabled"), true, new ConfigDescription("Enables quips, which are fun little messages appended to the message in chat after death.", null, Array.Empty<object>())).Value;
-            float goldMultiplier = Config.Bind(
+            var goldMultiplier = Config.Bind(
                 new ConfigDefinition("Drop Gold On Death", "Gold Multiplier"), 1f,
                 new ConfigDescription("Gold multiplier applied to gold split among players.", null,
                     Array.Empty<object>())).Value;
 
-            // This adds in support for multiple languages
-            // R2API offers LanguageAPI but we want to remain compatible with vanilla, thus use ZIO
-            PhysicalFileSystem physicalFileSystem = new PhysicalFileSystem();
-            var assemblyDir = System.IO.Path.GetDirectoryName(Info.Location);
-            FileSystem = new SubFileSystem(physicalFileSystem, physicalFileSystem.ConvertPathFromInternal(assemblyDir));
-
-            if (FileSystem.DirectoryExists("/Language/"))
+            // For some reason, we were unable to get languages to properly add via Zio, thus they are
+            // added directly via hooking onto the onCurrentLanguageChanged event. This isn't awful,
+            // but it does add some extra code that can be avoided. Pull requests that shift this to
+            // Zio and local files are welcome.
+            Language.onCurrentLanguageChanged += () =>
             {
-                Language.collectLanguageRootFolders += delegate (List<DirectoryEntry> list)
+                var list = new List<KeyValuePair<string, string>>();
+                if (Language.currentLanguageName == "en")
                 {
-                    list.Add(FileSystem.GetDirectoryEntry("/Language/"));
-                };
-            }
+                    list.Add(new KeyValuePair<string, string>("DGOD_DEATH_MESSAGE", "<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color> from the grave! {2}"));
+                    list.Add(new KeyValuePair<string, string>("DGOD_DEATH_MESSAGE_WITHOUT_QUIP", "<color=#00FF80>{0}</color> gave everyone <color=#e2b00b>{1} gold</color>!"));
+
+                    list.Add(new KeyValuePair<string, string>("QUIP_1", "Don't forget to thank them for dying!"));
+                    list.Add(new KeyValuePair<string, string>("QUIP_2", "Everybody point and laugh!"));
+                    list.Add(new KeyValuePair<string, string>("QUIP_3", "How kind of them!"));
+                    list.Add(new KeyValuePair<string, string>("QUIP_4", "Maybe next time..."));
+                    list.Add(new KeyValuePair<string, string>("QUIP_5", "Someone needs more health LOL"));
+                    list.Add(new KeyValuePair<string, string>("QUIP_6", "What were they thinking?!"));
+                }
+                Language.currentLanguage.SetStringsByTokens(list);
+            };
 
             // Subscribe to the pre-existing event, we were being a bad boy and hooking onto the GlobalEventManager before
             GlobalEventManager.onCharacterDeathGlobal += (damageReport) =>
             {
-                CharacterBody component = damageReport.victimBody;
-                NetworkUser networkUser = component.master.playerCharacterMasterController.networkUser;
+                var component = damageReport.victimBody;
+                var networkUser = component.master.playerCharacterMasterController.networkUser;
 
                 // Bail early if user is not in multiplayer
                 if (!networkUser || !IsMultiplayer()) return;
@@ -72,46 +78,44 @@ namespace DropGoldOnDeath
                 // Bail if the user has an unused Dio's Best Friend
                 if (component.master.inventory.GetItemCount(RoR2Content.Items.ExtraLife) > 0) return;
 
-                if (component.master.money > 0)
+                if (component.master.money <= 0) return;
+
+                // Pick a random quip to add a little humor
+                var rand = new Xoroshiro128Plus(Run.instance.stageRng.nextUlong);
+                int index = rand.RangeInt(0, Quips.Length);
+
+                // Get players alive and gold count
+                var aliveLists = AliveList(component.master);
+                uint money = component.master.money;
+                uint count = Convert.ToUInt32(aliveLists.Count);
+
+                // Return if there is no more alive players
+                if (count < 1) return;
+
+                // Zero the victim's gold and distribute it
+                uint split = money / count;
+                component.master.money = 0;
+                foreach (var player in aliveLists)
                 {
-                    // Pick a random quip to add a little humor
-                    Xoroshiro128Plus rand = new Xoroshiro128Plus(Run.instance.stageRng.nextUlong);
-                    int index = rand.RangeInt(0, Quips.Length);
+                    player.money += (uint)(split * goldMultiplier);
+                }
 
-                    // Get players alive and gold count
-                    List<CharacterMaster> aliveLists = AliveList(component.master);
-                    uint money = component.master.money;
-                    uint count = Convert.ToUInt32(aliveLists.Count);
-
-                    // Return if there is no more alive players
-                    if (count < 1) return;
-
-                    // Zero the victim's gold and distribute it
-                    uint split = money / count;
-                    component.master.money = 0;
-                    foreach (CharacterMaster player in aliveLists)
+                // Broadcast drop message
+                if (quipsEnabled)
+                {
+                    Chat.SendBroadcastChat(new Chat.SimpleChatMessage
                     {
-                        player.money += (uint)(split * goldMultiplier);
-                    }
-
-                    // Broadcast drop message
-                    if (quipsEnabled)
+                        baseToken = "DGOD_DEATH_MESSAGE",
+                        paramTokens = new [] { networkUser.userName, split.ToString(), Language.GetString(Quips[index]) }
+                    });
+                }
+                else
+                {
+                    Chat.SendBroadcastChat(new Chat.SimpleChatMessage
                     {
-                        Chat.SendBroadcastChat(new Chat.SimpleChatMessage
-                        {
-                            baseToken = $"DGOD_DEATH_MESSAGE",
-                            paramTokens = new [] { networkUser.userName, split.ToString(), Language.GetString(Quips[index]) }
-                        });
-                    }
-                    else
-                    {
-                        Chat.SendBroadcastChat(new Chat.SimpleChatMessage
-                        {
-                            baseToken = $"DGOD_DEATH_MESSAGE_WITHOUT_QUIP",
-                            paramTokens = new [] { networkUser.userName, split.ToString(), Language.GetString(Quips[index]) }
-                        });
-                    }
-                    
+                        baseToken = "DGOD_DEATH_MESSAGE_WITHOUT_QUIP",
+                        paramTokens = new [] { networkUser.userName, split.ToString(), Language.GetString(Quips[index]) }
+                    });
                 }
             };
         }
@@ -143,9 +147,9 @@ namespace DropGoldOnDeath
         /// Return list of alive player(s)
         private static List<CharacterMaster> AliveList(CharacterMaster victim)
         {
-            List<CharacterMaster> players = new List<CharacterMaster>();
+            var players = new List<CharacterMaster>();
 
-            foreach (PlayerCharacterMasterController player in PlayerCharacterMasterController.instances)
+            foreach (var player in PlayerCharacterMasterController.instances)
             {
                 if (player.isConnected
                     && player.master.hasBody
